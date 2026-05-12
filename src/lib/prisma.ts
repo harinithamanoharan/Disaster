@@ -4,7 +4,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
 
-const connectionString = `${process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL || ""}`;
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL;
+
+if (!connectionString) {
+  throw new Error("Database connection string is missing. Please check your environment variables.");
+}
+
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 
